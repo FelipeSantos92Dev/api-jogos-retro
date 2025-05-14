@@ -15,7 +15,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/games_records
       - JWT_SECRET=sua_chave_secreta_aqui
     volumes:
-      - ./src:/app/src
+      - ./src:/src
     command: >
       sh -c "npx prisma migrate dev && npm run start"
 
