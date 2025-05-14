@@ -1,0 +1,53 @@
+services:
+  # Serviço da aplicação Node.js
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: animes-api
+    restart: always
+    ports:
+      - "4001:4001"
+    depends_on:
+      - postgres
+    environment:
+      - PORT=4001
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/games_records
+      - JWT_SECRET=sua_chave_secreta_aqui
+    volumes:
+      - ./src:/app/src
+    command: >
+      sh -c "npx prisma migrate dev && npm run start"
+
+  # Serviço PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=animesdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Serviço PGAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5439:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  pgadmin_data:
